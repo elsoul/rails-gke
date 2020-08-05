@@ -2,7 +2,7 @@ require_relative "lib/rails/gke/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "rails-gke"
-  spec.version       = Rakuten::Travel::Crawler::VERSION
+  spec.version       = Rails::Gke::VERSION
   spec.authors       = ["Fumitake Kawasaki"]
   spec.email         = ["fumitake.kawasaki@el-soul.com"]
 
