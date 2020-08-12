@@ -7,7 +7,9 @@ module Rails
       attr_accessor :configuration
 
       def start
-        File.new "development.yml"
+        File.open("deployment.yml", "w") do |f|
+          f.write("apiVersion: extensions/v1beta1")
+        end
       end
 
       def create_cluster
