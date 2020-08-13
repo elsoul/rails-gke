@@ -63,9 +63,16 @@ end
 ```
 Set your environment as needed above.
 
-Then create `yml` files by this command
+Then create `yml` files in rails console
 
-    $ create_yml
+```ruby
+rails c
+Running via Spring preloader in process 18047
+Loading development environment (Rails 6.0.3.2)
+irb(main):001:0> Rails::Gke::Initialize.create_yml
+=> true
+```
+
 
 Now you can see 4 GKE yml files;
 
@@ -75,16 +82,26 @@ Now you can see 4 GKE yml files;
 `ingress.yml`
 
 In `deployment.yml` you need to change your container version when you update your container.
+
+
 `asia.gcr.io/project_id/app_name:0.0.1`
+
 
 Also you need to set ENV. And you can edit `secret.yml` as you needed.
 
 
 Then create `rails task file`
 
-    $ create_task
+```ruby
+rails c
+Running via Spring preloader in process 18047
+Loading development environment (Rails 6.0.3.2)
+irb(main):001:0> Rails::Gke::Initialize.create_task
+=> true
+```
 
 This will create `lib/tasks/gke.rake` file.
+
 
 Now you are ready to use all the command.
 
@@ -100,7 +117,7 @@ Please check `lib/tasks/gke.rake` file.
 You can run gke command like this;
 
 ```ruby
-rails gke:task_name
+rails gke:TASK_NAME
 ```
 
 So let's create VPC Network in Google Cloud Platform.
@@ -133,12 +150,20 @@ Apply deployment.yml
 rails gke:apply_deployment
 ```
 
-Check your GKE pods
+Check your GKE pods if its running well.
 
 ```ruby
 rails gke:get_pods
 ```
 
+Output
+```
+NAME                                      READY   STATUS    RESTARTS   AGE
+elsoul-api-deployment-5dfb777c67-456js   1/1     Running   0          45h
+elsoul-api-deployment-5dfb777c67-g8kwp   1/1     Running   0          45h
+elsoul-api-deployment-5dfb777c67-x857m   1/1     Running   0          45h
+```
+If you can't see containers ready, you need to fix your container first.
 
 
 
