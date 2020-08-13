@@ -126,13 +126,12 @@ module Rails
     end
 
     class Configuration
-      attr_accessor :project_id, :app, :network, :sub_network, :machine_type, :zone, :domain, :google_application_credentials
+      attr_accessor :project_id, :app, :network, :machine_type, :zone, :domain, :google_application_credentials
 
       def initialize
         @project_id = nil
         @app = nil
         @network = nil
-        @sub_network = nil
         @machine_type = nil
         @zone = nil
         @domain = nil

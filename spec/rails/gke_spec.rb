@@ -9,11 +9,10 @@ RSpec.describe Rails::Gke do
         config.project_id = "abc123"
         config.app = "abc123"
         config.network = "abc123"
-        config.sub_network = "abc123"
         config.machine_type = "abc123"
         config.zone = "abc123"
         config.domain = "abc123.com"
-        config.google_application_credentials = "config/key.json"
+        config.google_application_credentials = "config/abc123.json"
       end
 
       expect(Rails::Gke.configuration.project_id).to eq "abc123"
