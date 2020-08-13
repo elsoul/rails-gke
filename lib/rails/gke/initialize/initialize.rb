@@ -1,7 +1,6 @@
 module Rails
   module Gke::Initialize
     class << self
-
       def config
         FileUtils.mkdir_p "config/initializers" unless File.directory? "config"
         File.open("config/initializers/rails-gke.rb", "w") do |f|
@@ -17,6 +16,18 @@ module Rails
           EOS
           f.write(text)
         end
+      end
+
+      def create_yml
+        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+        self.deployment
+        puts "created deployment.yml"
+        self.service
+        puts "created service.yml"
+        self.secret
+        puts "created secret.yml"
+        self.ingress
+        puts "created ingress.yml"
       end
 
       def deployment
@@ -72,6 +83,9 @@ module Rails
           EOS
           f.write(yml)
         end
+        true
+      rescue
+        false
       end
 
       def service
@@ -95,8 +109,10 @@ module Rails
           EOS
           f.write(yml)
         end
+        true
+      rescue
+        false
       end
-
 
       def ingress
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
@@ -122,8 +138,32 @@ module Rails
           EOS
           f.write(yml)
         end
+        true
+      rescue
+        false
       end
 
+      def secret
+        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+        return "Error: Already Exsit secret.yml" if File.directory? "secret.yml"
+        File.open("secret.yml", "w") do |f|
+          yml = <<~EOS
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: #{Rails::Gke.configuration.app}-secret
+            type: Opaque
+            data:
+              db_user: dXNlcg==
+              db_pw: cGFzc3dvcmQ=
+              db_host: bG9jYWxob3N0
+          EOS
+          f.write(yml)
+        end
+        true
+      rescue
+        false
+      end
     end
   end
 end

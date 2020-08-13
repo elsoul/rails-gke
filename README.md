@@ -1,15 +1,17 @@
-# Rails::Gke
+# Ruby on Rails GKE Deploy Kit
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/rails/gke`. To experiment with that code, run `bin/console` for an interactive prompt.
+Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubernate Engine with https.
+## Dependency
 
-TODO: Delete this and the text above, and describe your gem
+1. Google SDK
+2. Docker
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'rails-gke'
+    gem "rails-gke"
 ```
 
 And then execute:
@@ -22,7 +24,7 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+    $ rails_gke
 
 ## Development
 

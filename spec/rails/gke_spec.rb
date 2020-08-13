@@ -13,6 +13,7 @@ RSpec.describe Rails::Gke do
         config.machine_type = "abc123"
         config.zone = "abc123"
         config.domain = "abc123.com"
+        config.google_application_credentials = "config/key.json"
       end
 
       expect(Rails::Gke.configuration.project_id).to eq "abc123"

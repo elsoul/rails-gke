@@ -7,10 +7,9 @@ module Rails
     class << self
       attr_accessor :configuration
 
-      def start
-        File.open("deployment.yml", "w") do |f|
-          f.write("apiVersion: extensions/v1beta1")
-        end
+      def create_network
+        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+        system("gcloud compute networks create #{Rails::Gke.configuration.network}")
       end
 
       def create_cluster
@@ -127,7 +126,7 @@ module Rails
     end
 
     class Configuration
-      attr_accessor :project_id, :app, :network, :sub_network, :machine_type, :zone, :domain
+      attr_accessor :project_id, :app, :network, :sub_network, :machine_type, :zone, :domain, :google_application_credentials
 
       def initialize
         @project_id = nil
@@ -137,6 +136,7 @@ module Rails
         @machine_type = nil
         @zone = nil
         @domain = nil
+        @google_application_credentials = nil
       end
     end
   end
