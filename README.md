@@ -50,15 +50,17 @@ Initialize Config
 
 This command will create `config/initializers/rails-gke.rb`
 
+Sample Config
 ```ruby
+# It's better to use ENV to define values.
 Rails::Gke.configure do |config|
-  config.project_id = ENV["project_id"]
-  config.app = ENV["app"]
-  config.network = ENV["network"]
-  config.machine_type = ENV["machine_type"]
-  config.zone = ENV["zone"]
-  config.domain = ENV["DOMAIN"]
-  config.google_application_credentials = ENV["GOOGLE_APPLICATION_CREDENTIALS"]
+  config.project_id = "elsoul"
+  config.app = "elsoul-api"
+  config.network = "elsoul-blog"
+  config.machine_type = "custom-1-6656"
+  config.zone = "asia-northeast1"
+  config.domain = "rails-gke.el-soul.com"
+  config.google_application_credentials = "config/credentials.json"
 end
 ```
 Set your environment as needed above.
@@ -87,7 +89,9 @@ In `deployment.yml` you need to change your container version when you update yo
 `asia.gcr.io/project_id/app_name:0.0.1`
 
 
-Also you need to set ENV. And you can edit `secret.yml` as you needed.
+Also you need to set ENV. 
+
+And you can edit `secret.yml` as you needed.
 
 
 Then create `rails task file`
