@@ -1,4 +1,5 @@
 require "rails/gke/version"
+require "rails/gke/initialize"
 
 module Rails
   module Gke
@@ -22,12 +23,12 @@ module Rails
       end
 
       def create_namespace
-        namespace = Rails::Gke.configuration.namespace
-        system("kubectl create namespace #{namespace}")
+        app = Rails::Gke.configuration.app
+        system("kubectl create namespace #{app}")
       end
 
       def create_ip
-        ip_name = Rails::Gke.configuration.global_ip
+        ip_name = Rails::Gke.configuration.app.to_s + "-ip"
         system("gcloud compute addresses create #{ip_name} --global")
       end
 
@@ -126,7 +127,7 @@ module Rails
     end
 
     class Configuration
-      attr_accessor :project_id, :app, :network, :sub_network, :machine_type, :namespace, :global_ip
+      attr_accessor :project_id, :app, :network, :sub_network, :machine_type, :zone, :domain
 
       def initialize
         @project_id = nil
@@ -134,9 +135,8 @@ module Rails
         @network = nil
         @sub_network = nil
         @machine_type = nil
-        @namespace = nil
-        @global_ip = nil
         @zone = nil
+        @domain = nil
       end
     end
   end

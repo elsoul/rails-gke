@@ -11,8 +11,8 @@ RSpec.describe Rails::Gke do
         config.network = "abc123"
         config.sub_network = "abc123"
         config.machine_type = "abc123"
-        config.namespace = "abc123"
-        config.global_ip = "abc123"
+        config.zone = "abc123"
+        config.domain = "abc123.com"
       end
 
       expect(Rails::Gke.configuration.project_id).to eq "abc123"
