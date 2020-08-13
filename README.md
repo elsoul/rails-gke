@@ -2,6 +2,23 @@
 
 Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubernate Engine with https.
 
+<p align="center">
+
+  <a aria-label="Ruby logo" href="https://el-soul.com">
+    <img src="https://badgen.net/badge/icon/Made%20by%20ELSOUL?icon=ruby&label&color=black&labelColor=black">
+  </a>
+  <br/>
+
+  <a aria-label="Ruby Gem version" href="https://rubygems.org/gems/rails-gke">
+    <img alt="" src="https://badgen.net/rubygems/v/rails-gke/latest">
+  </a>
+  <a aria-label="Downloads Number" href="https://rubygems.org/gems/rails-gke">
+    <img alt="" src="https://badgen.net/rubygems/dt/rails-gke">
+  </a>
+  <a aria-label="License" href="https://github.com/elsoul/rails-gke/blob/master/LICENSE">
+    <img alt="" src="https://badgen.net/badge/license/Apache/blue">
+  </a>
+</p>
 
 ## Dependency
 
