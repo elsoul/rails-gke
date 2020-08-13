@@ -2,16 +2,17 @@ module Rails
   module Gke::Initialize
     class << self
       def config
-        FileUtils.mkdir_p "config/initializers" unless File.directory? "config"
+        FileUtils.mkdir_p "config/initializers" unless File.directory? "#{Rails.root}/config"
         File.open("config/initializers/rails-gke.rb", "w") do |f|
           text = <<~EOS
             Rails::Gke.configure do |config|
-              config.project_id = ENV["project_id"] || "elsoul-project"
-              config.app = ENV["app"] || "elsoul-app"
-              config.network = ENV["network"] || "elsoul-network"
-              config.sub_network = ENV["sub_network"] || "elsoul-sub-network"
-              config.machine_type = ENV["machine_type"] || "custom-1-6656"
-              config.zone = ENV["zone"] || "asia-northeast1"
+              config.project_id = ENV["PROJECT_ID"]
+              config.app = ENV["APP"]
+              config.network = ENV["NETWORK"]
+              config.machine_type = ENV["MACHINE_TYPE"]
+              config.zone = ENV["ZONE"]
+              config.domain = ENV["DOMAIN"]
+              config.google_application_credentials = ENV["GOOGLE_APPLICATION_CREDENTIALS"]
             end
           EOS
           f.write(text)
@@ -20,19 +21,15 @@ module Rails
 
       def create_yml
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        self.deployment
-        puts "created deployment.yml"
-        self.service
-        puts "created service.yml"
-        self.secret
-        puts "created secret.yml"
-        self.ingress
-        puts "created ingress.yml"
+        puts "created deployment.yml" if self.deployment
+        puts "created service.yml" if self.service
+        puts "created secret.yml" if self.secret
+        puts "created ingress.yml" self.ingress
       end
 
       def deployment
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit deployment.yml" if File.directory? "deployment.yml"
+        return "Error: Already Exsit deployment.yml" if File.directory? "#{Rails.root}/deployment.yml"
         File.open("deployment.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: extensions/v1beta1
@@ -90,7 +87,7 @@ module Rails
 
       def service
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit service.yml" if File.directory? "service.yml"
+        return "Error: Already Exsit service.yml" if File.directory? "#{Rails.root}/service.yml"
         File.open("service.yml", "w") do |f|
           yml = <<~EOS
             kind: Service
@@ -116,7 +113,7 @@ module Rails
 
       def ingress
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit ingress.yml" if File.directory? "ingress.yml"
+        return "Error: Already Exsit ingress.yml" if File.directory? "#{Rails.root}/ingress.yml"
         File.open("ingress.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: extensions/v1beta1
@@ -145,7 +142,7 @@ module Rails
 
       def secret
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit secret.yml" if File.directory? "secret.yml"
+        return "Error: Already Exsit secret.yml" if File.directory? "#{Rails.root}/secret.yml"
         File.open("secret.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: v1
