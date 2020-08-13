@@ -1,10 +1,14 @@
 # Ruby on Rails GKE Deploy Kit
 
 Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubernate Engine with https.
+
+
 ## Dependency
 
 1. Google SDK
+[https://cloud.google.com/sdk/docs](https://cloud.google.com/sdk/docs)
 2. Docker
+[https://www.docker.com/](https://www.docker.com/)
 
 ## Installation
 
@@ -34,15 +38,25 @@ Rails::Gke.configure do |config|
   config.project_id = ENV["project_id"] || "elsoul-project"
   config.app = ENV["app"] || "elsoul-app"
   config.network = ENV["network"] || "elsoul-network"
-  config.sub_network = ENV["sub_network"] || "elsoul-sub-network"
   config.machine_type = ENV["machine_type"] || "g1-small"
   config.zone = ENV["zone"] || "asia-northeast1"
+  config.domain = ENV["DOMAIN"]
+  config.google_application_credentials = ENV["GOOGLE_APPLICATION_CREDENTIALS"]
 end
 ```
 Set your environment as needed above.
 
+Then create `yml` files by this running command
 
     $ create_yml
+
+Now you can see 4 GKE yml files;
+
+`deployment.yml`
+`service.yml`
+`secret.yml`
+`ingress.yml`
+
 
 ## Development
 
@@ -52,7 +66,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/elsoul/hotel_price. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/elsoul/rails-gke. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
