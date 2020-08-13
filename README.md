@@ -11,7 +11,7 @@ Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubern
 Add this line to your application's Gemfile:
 
 ```ruby
-    gem "rails-gke"
+gem "rails-gke"
 ```
 
 And then execute:
@@ -23,8 +23,26 @@ Or install it yourself as:
     $ gem install rails-gke
 
 ## Usage
+Initialize Config
 
     $ rails_gke
+
+This command will create `config/initializers/rails-gke.rb`
+
+```ruby
+Rails::Gke.configure do |config|
+  config.project_id = ENV["project_id"] || "elsoul-project"
+  config.app = ENV["app"] || "elsoul-app"
+  config.network = ENV["network"] || "elsoul-network"
+  config.sub_network = ENV["sub_network"] || "elsoul-sub-network"
+  config.machine_type = ENV["machine_type"] || "g1-small"
+  config.zone = ENV["zone"] || "asia-northeast1"
+end
+```
+Set your environment as needed above.
+
+
+    $ create_yml
 
 ## Development
 

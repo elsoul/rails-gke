@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 require "rails/gke"
 
-puts Rails::Gke::Initialize.config
+puts Rails::Gke::Initialize.create_yml
