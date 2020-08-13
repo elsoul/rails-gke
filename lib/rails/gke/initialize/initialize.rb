@@ -6,13 +6,13 @@ module Rails
         File.open("config/initializers/rails-gke.rb", "w") do |f|
           text = <<~EOS
             Rails::Gke.configure do |config|
-              config.project_id = ENV["PROJECT_ID"]
-              config.app = ENV["APP"]
-              config.network = ENV["NETWORK"]
-              config.machine_type = ENV["MACHINE_TYPE"]
-              config.zone = ENV["ZONE"]
-              config.domain = ENV["DOMAIN"]
-              config.google_application_credentials = ENV["GOOGLE_APPLICATION_CREDENTIALS"]
+              config.project_id = "your-PROJECT_ID"
+              config.app = "your-APP-name"
+              config.network = "your-NETWORK"
+              config.machine_type = "your-MACHINE_TYPE"
+              config.zone = "your-ZONE"
+              config.domain = "your-DOMAIN"
+              config.google_application_credentials = "your-GOOGLE_APPLICATION_CREDENTIALS"
             end
           EOS
           f.write(text)
@@ -25,6 +25,115 @@ module Rails
         puts "created service.yml" if self.service
         puts "created secret.yml" if self.secret
         puts "created ingress.yml" if self.ingress
+      end
+
+      def create_task
+        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+        FileUtils.mkdir_p "lib/tasks" unless File.directory? "lib/tasks"
+        return "Error: Already Exsit lib/tasks/gke.rake" if File.file? "lib/tasks/gke.rake"
+        File.open("lib/tasks/gke.rake", "w") do |f|
+          task = <<~EOS
+            namespace :gke do
+              task create_cluster: :environment do
+                Rails.Gke.create_cluster
+              end
+
+              task create_namespace: :environment do
+                Rails::Gke.create_namespace
+              end
+
+              task create_ip: :environment do
+                Rails::Gke.create_ip
+              end
+
+              task apply_deployment: :environment do
+                Rails::Gke.apply_deployment
+              end
+
+              task apply_service: :environment do
+                Rails::Gke.apply_service
+              end
+
+              task apply_secret: :environment do
+                Rails::Gke.apply_secret
+              end
+
+              task apply_ingress: :environment do
+                Rails::Gke.apply_ingress
+              end
+
+              task delete_deployment: :environment do
+                Rails::Gke.delete_deployment
+              end
+
+              task delete_service: :environment do
+                Rails::Gke.delete_service
+              end
+
+              task delete_secret: :environment do
+                Rails::Gke.delete_secret
+              end
+
+              task delete_ingress: :environment do
+                Rails::Gke.delete_ingress
+              end
+
+              task test: :environment do
+                Rails::Gke.run_test
+              end
+
+              task :update, [:version] => :environment do |_, args|
+                Rails::Gke.update_container version: args[:version]
+              end
+
+              task apply_all: :environment do
+                Rails::Gke.apply_deployment
+                Rails::Gke.apply_service
+                Rails::Gke.apply_secret
+                Rails::Gke.apply_ingress
+              end
+
+              task delete_all: :environment do
+                Rails::Gke.delete_deployment
+                Rails::Gke.delete_service
+                Rails::Gke.delete_secret
+                Rails::Gke.delete_ingress
+              end
+
+              task get_pods: :environment do
+                Rails::Gke.get_pods
+              end
+
+              task get_svc: :environment do
+                Rails::Gke.get_svc
+              end
+
+              task get_ingress: :environment do
+                Rails::Gke.get_ingress
+              end
+
+              task get_clusters: :environment do
+                Rails::Gke.get_clusters
+              end
+
+              task get_current_cluster: :environment do
+                Rails::Gke.get_current_cluster
+              end
+
+              task :use_context, [:cluster] => :environment do |_, args|
+                Rails::Gke.use_context cluster: args[:cluster]
+              end
+
+              task get_credentials: :environment do
+                Rails::Gke.get_credentials
+              end
+            end
+          EOS
+          f.write(task)
+        end
+        true
+      rescue
+        false
       end
 
       def deployment

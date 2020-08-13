@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+require "rails/gke"
+
+puts Rails::Gke::Initialize.create_task
