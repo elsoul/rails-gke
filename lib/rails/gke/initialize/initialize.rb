@@ -24,7 +24,7 @@ module Rails
         puts "created deployment.yml" if self.deployment
         puts "created service.yml" if self.service
         puts "created secret.yml" if self.secret
-        puts "created ingress.yml" self.ingress
+        puts "created ingress.yml" if self.ingress
       end
 
       def deployment
