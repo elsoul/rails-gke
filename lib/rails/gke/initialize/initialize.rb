@@ -2,7 +2,7 @@ module Rails
   module Gke::Initialize
     class << self
       def config
-        FileUtils.mkdir_p "config/initializers" unless File.directory? "#{Rails.root}/config"
+        FileUtils.mkdir_p "config/initializers" unless File.directory? "config"
         File.open("config/initializers/rails-gke.rb", "w") do |f|
           text = <<~EOS
             Rails::Gke.configure do |config|
@@ -29,7 +29,7 @@ module Rails
 
       def deployment
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit deployment.yml" if File.directory? "#{Rails.root}/deployment.yml"
+        return "Error: Already Exsit deployment.yml" if File.directory? "../deployment.yml"
         File.open("deployment.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: extensions/v1beta1
@@ -87,7 +87,7 @@ module Rails
 
       def service
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit service.yml" if File.directory? "#{Rails.root}/service.yml"
+        return "Error: Already Exsit service.yml" if File.directory? "../service.yml"
         File.open("service.yml", "w") do |f|
           yml = <<~EOS
             kind: Service
@@ -113,7 +113,7 @@ module Rails
 
       def ingress
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit ingress.yml" if File.directory? "#{Rails.root}/ingress.yml"
+        return "Error: Already Exsit ingress.yml" if File.directory? "../ingress.yml"
         File.open("ingress.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: extensions/v1beta1
@@ -142,7 +142,7 @@ module Rails
 
       def secret
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
-        return "Error: Already Exsit secret.yml" if File.directory? "#{Rails.root}/secret.yml"
+        return "Error: Already Exsit secret.yml" if File.directory? "../secret.yml"
         File.open("secret.yml", "w") do |f|
           yml = <<~EOS
             apiVersion: v1
