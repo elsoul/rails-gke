@@ -43,7 +43,7 @@ Or install it yourself as:
 
     $ gem install rails-gke
 
-## Usage
+## Configuration
 Initialize Config
 
     $ rails_gke
@@ -73,6 +73,72 @@ Now you can see 4 GKE yml files;
 `service.yml`
 `secret.yml`
 `ingress.yml`
+
+In `deployment.yml` you need to change your container version when you update your container.
+`asia.gcr.io/project_id/app_name:0.0.1`
+
+Also you need to set ENV. And you can edit `secret.yml` as you needed.
+
+
+Then create `rails task file`
+
+    $ create_task
+
+This will create `lib/tasks/gke.rake` file.
+
+Now you are ready to use all the command.
+
+
+## Usage
+
+Set GCP Project
+
+    $ gcloud auth login
+    $ gcloud config set project `your-project-id`
+
+Please check `lib/tasks/gke.rake` file.
+You can run gke command like this;
+
+```ruby
+rails gke:task_name
+```
+
+So let's create VPC Network in Google Cloud Platform.
+
+```ruby
+rails gke:create_network
+```
+
+Create Kubernate Cluster
+
+```ruby
+rails gke:create_cluster
+```
+
+Create Global IP
+
+```ruby
+rails gke:create_ip
+```
+
+Create namespace
+
+```ruby
+rails gke:create_namespace
+```
+
+Apply deployment.yml
+
+```ruby
+rails gke:apply_deployment
+```
+
+Check your GKE pods
+
+```ruby
+rails gke:get_pods
+```
+
 
 
 

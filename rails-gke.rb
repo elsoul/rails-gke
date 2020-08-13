@@ -6,4 +6,6 @@ Rails::Gke.configure do |config|
   config.network = "elsoul-blog"
   config.machine_type = "custom-1-6656"
   config.zone = "asia-northeast1"
+  config.domain = "rails-gke.el-soul.com"
+  config.google_application_credentials = "config/credentials.json"
 end
