@@ -1,6 +1,6 @@
 # Ruby on Rails GKE Deploy Kit
 
-Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubernate Engine with https.
+Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubernate Engine with ingress https.
 
 <p align="center">
 
@@ -52,18 +52,18 @@ This command will create `config/initializers/rails-gke.rb`
 
 ```ruby
 Rails::Gke.configure do |config|
-  config.project_id = ENV["project_id"] || "elsoul-project"
-  config.app = ENV["app"] || "elsoul-app"
-  config.network = ENV["network"] || "elsoul-network"
-  config.machine_type = ENV["machine_type"] || "g1-small"
-  config.zone = ENV["zone"] || "asia-northeast1"
+  config.project_id = ENV["project_id"]
+  config.app = ENV["app"]
+  config.network = ENV["network"]
+  config.machine_type = ENV["machine_type"]
+  config.zone = ENV["zone"]
   config.domain = ENV["DOMAIN"]
   config.google_application_credentials = ENV["GOOGLE_APPLICATION_CREDENTIALS"]
 end
 ```
 Set your environment as needed above.
 
-Then create `yml` files by this running command
+Then create `yml` files by this command
 
     $ create_yml
 
@@ -73,6 +73,7 @@ Now you can see 4 GKE yml files;
 `service.yml`
 `secret.yml`
 `ingress.yml`
+
 
 
 ## Development
