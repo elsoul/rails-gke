@@ -23,9 +23,9 @@ Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on Google Kubern
 ## Dependency
 
 1. Google SDK
-[https://cloud.google.com/sdk/docs](https://cloud.google.com/sdk/docs)
+   [https://cloud.google.com/sdk/docs](https://cloud.google.com/sdk/docs)
 2. Docker
-[https://www.docker.com/](https://www.docker.com/)
+   [https://www.docker.com/](https://www.docker.com/)
 
 ## Installation
 
@@ -44,6 +44,7 @@ Or install it yourself as:
     $ gem install rails-gke
 
 ## Configuration
+
 Initialize Config
 
     $ rails_gke
@@ -51,6 +52,7 @@ Initialize Config
 This command will create `config/initializers/rails-gke.rb`
 
 Sample Config
+
 ```ruby
 # It's better to use ENV to define values.
 Rails::Gke.configure do |config|
@@ -63,18 +65,30 @@ Rails::Gke.configure do |config|
   config.google_application_credentials = "config/credentials.json"
 end
 ```
+
+Check if configuration set in console
+
+```ruby
+rails c
+irb(main):002:0> Rails::Gke.configuration.nil?
+=> false
+```
+
 Set your environment as needed above.
 
 Then create `yml` files in rails console
 
 ```ruby
+Rails::Gke::Initialize.create_yml
+```
+
+In console
+
+```ruby
 rails c
-Running via Spring preloader in process 18047
-Loading development environment (Rails 6.0.3.2)
 irb(main):001:0> Rails::Gke::Initialize.create_yml
 => true
 ```
-
 
 Now you can see 4 GKE yml files;
 
@@ -85,30 +99,29 @@ Now you can see 4 GKE yml files;
 
 In `deployment.yml` you need to change your container version when you update your container.
 
-
 `asia.gcr.io/project_id/app_name:0.0.1`
 
-
-Also you need to set ENV. 
+Also you need to set ENV.
 
 And you can edit `secret.yml` as you needed.
-
 
 Then create `rails task file`
 
 ```ruby
+Rails::Gke::Initialize.create_task
+```
+
+In console
+
+```ruby
 rails c
-Running via Spring preloader in process 18047
-Loading development environment (Rails 6.0.3.2)
 irb(main):001:0> Rails::Gke::Initialize.create_task
 => true
 ```
 
 This will create `lib/tasks/gke.rake` file.
 
-
 Now you are ready to use all the command.
-
 
 ## Usage
 
@@ -161,13 +174,27 @@ rails gke:get_pods
 ```
 
 Output
+
 ```
 NAME                                      READY   STATUS    RESTARTS   AGE
-elsoul-api-deployment-5dfb777c67-456js   1/1     Running   0          45h
-elsoul-api-deployment-5dfb777c67-g8kwp   1/1     Running   0          45h
-elsoul-api-deployment-5dfb777c67-x857m   1/1     Running   0          45h
+elsoul-api-deployment-5dfb777c67-456js   1/1     Running   0          20s
+elsoul-api-deployment-5dfb777c67-g8kwp   1/1     Running   0          20s
+elsoul-api-deployment-5dfb777c67-x857m   1/1     Running   0          20s
 ```
+
 If you can't see containers ready, you need to fix your container first.
+
+Apply service.yml
+
+```ruby
+rails gke:apply_service
+```
+
+Check your GKE svc if its running well.
+
+```ruby
+rails gke:get_svc
+```
 
 
 
