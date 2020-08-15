@@ -137,31 +137,40 @@ You can run gke command like this;
 rails gke:TASK_NAME
 ```
 
-So let's create VPC Network in Google Cloud Platform.
+So let's deploy your rails application on Google Kubernates Engine.
+
+1. Create VPC Network
 
 ```ruby
 rails gke:create_network
 ```
 
-Create Kubernate Cluster
+2. Create Kubernate Cluster
 
 ```ruby
 rails gke:create_cluster
 ```
 
-Create Global IP
+3. Create Global IP
 
 ```ruby
 rails gke:create_ip
 ```
 
-Create namespace
+4. Create namespace
 
 ```ruby
 rails gke:create_namespace
 ```
 
-Apply deployment.yml
+5. Apply secret.yml 
+
+```ruby
+rails gke:apply_secret
+```
+
+
+6. Apply deployment.yml
 
 ```ruby
 rails gke:apply_deployment
@@ -184,7 +193,7 @@ elsoul-api-deployment-5dfb777c67-x857m   1/1     Running   0          20s
 
 If you can't see containers ready, you need to fix your container first.
 
-Apply service.yml
+7. Apply service.yml
 
 ```ruby
 rails gke:apply_service
@@ -194,6 +203,33 @@ Check your GKE svc if its running well.
 
 ```ruby
 rails gke:get_svc
+```
+
+Output
+
+```
+NAME                  TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)        AGE
+elsoul-api-service   LoadBalancer   xx.xxx.x.xx   xx.xx.xxx.xxx   80:32321/TCP     1h
+```
+
+8. Apply ingress.yml
+
+```ruby
+rails gke:apply_ingress
+```
+
+Check your GKE ingress if its running well.
+
+```ruby
+rails gke:get_ingress
+```
+
+This will take serveral mins.
+You need to set the IP address to A record in your domain management console once Ingress got IP ADDRESS
+
+```
+NAME                HOSTS                     ADDRESS         PORTS   AGE
+https-elsoul-api   elsoul-api.el-soul.com   xx.xx.xxx.xxx   80      5d16h
 ```
 
 
