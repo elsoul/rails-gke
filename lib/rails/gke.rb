@@ -118,6 +118,17 @@ module Rails
         zone = Rails::Gke.configuration.zone
         system("gcloud container clusters get-credentials #{app} -cluster --zone #{zone}")
       end
+
+      def create_ssl
+        system("gcloud compute ssl-certificates create #{Rails::Gke.configuration.app}-ssl --domains=#{Rails::Gke.configuration.domain} --global")
+      end
+
+      def update_proxy
+        system("gcloud compute target-https-proxies update TARGET_PROXY_NAME \
+    --ssl-certificates SSL_CERTIFICATE_LIST \
+    --global-ssl-certificates \
+    --global")
+      end
     end
 
     def self.configure

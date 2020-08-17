@@ -232,6 +232,9 @@ NAME                HOSTS                     ADDRESS         PORTS   AGE
 https-elsoul-api   elsoul-api.el-soul.com   xx.xx.xxx.xxx   80      5d16h
 ```
 
+9. Create LoadBalancer Frontend HTTPS
+
+
 
 
 ## Development
