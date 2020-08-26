@@ -17,8 +17,8 @@ module Rails
         sub_network = Rails::Gke.configuration.sub_network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
-        system("gcloud container clusters create graphql-api-cluster --region #{zone} --num-nodes 1 \
-          --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network}")
+        system("gcloud container clusters create graphql-api-cluster --region #{zone} \
+          --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks")
       end
 
       def create_namespace
