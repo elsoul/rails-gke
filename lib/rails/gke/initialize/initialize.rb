@@ -3,8 +3,9 @@ module Rails
     class << self
       def config
         FileUtils.mkdir_p "config/initializers" unless File.directory? "config"
-        File.open("config/initializers/rails-gke.rb", "w") do |f|
-          text = <<~EOS
+        path = "config/initializers/rails-gke.rb"
+        File.open(path, "w") do |f|
+          f.write <<~EOS
             Rails::Gke.configure do |config|
               config.project_id = "your-PROJECT_ID"
               config.app = "your-APP-name"
@@ -15,7 +16,6 @@ module Rails
               config.google_application_credentials = "your-GOOGLE_APPLICATION_CREDENTIALS"
             end
           EOS
-          f.write(text)
         end
       end
 
@@ -243,6 +243,55 @@ module Rails
 
           EOS
           f.write(yml)
+        end
+        true
+      rescue
+        false
+      end
+
+      def grpc_service_deployment
+        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+        return "Error: Already Exsit deployment.yml" if File.file? "deployment.yml"
+        path = "secret.yml"
+        File.open(path, "w") do |f|
+          f.write <<~EOS
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: #{Rails::Gke.configuration.service1}
+              annotations:
+                cloud.google.com/neg: '{"exposed_ports":{"8080":{}}}'
+            spec:
+              ports:
+              - port: 8080
+                name: #{Rails::Gke.configuration.service1}
+                protocol: TCP
+                targetPort: 50051
+              selector:
+                run: #{Rails::Gke.configuration.service1}
+              type: ClusterIP
+
+            ---
+            apiVersion: extensions/v1beta1
+            kind: Deployment
+            metadata:
+              labels:
+                run: #{Rails::Gke.configuration.service1}
+              name: #{Rails::Gke.configuration.service1}
+            spec:
+              replicas: 2
+              template:
+                metadata:
+                  labels:
+                    run: #{Rails::Gke.configuration.service1}
+                spec:
+                  containers:
+                  - image: asia.gcr.io/#{Rails::Gke.configuration.project_id}/#{Rails::Gke.configuration.service1}:0.0.1
+                    name: #{Rails::Gke.configuration.service1}
+                    ports:
+                    - protocol: TCP
+                      containerPort: 50051
+          EOS
         end
         true
       rescue
