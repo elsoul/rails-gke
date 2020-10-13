@@ -31,11 +31,18 @@ module Rails
         return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
         FileUtils.mkdir_p "lib/tasks" unless File.directory? "lib/tasks"
         return "Error: Already Exsit lib/tasks/gke.rake" if File.file? "lib/tasks/gke.rake"
-        File.open("lib/tasks/gke.rake", "w") do |f|
-          task = <<~EOS
+        path = "lib/tasks/gke.rake"
+        File.open(path, "w") do |f|
+          f.write <<~EOS
             namespace :gke do
               task create_cluster: :environment do
-                Rails.Gke.create_cluster
+                Rails::Gke.create_cluster
+              end
+
+              task :resize_cluster, [:pool_name, :node_num] => :environment do |_, args|
+                pool_name = "default-pool" || args[:pool_name]
+                node_num = 1 || args[:node_num]
+                Rails::Gke.resize_cluster pool_name: pool_name, node_num: node_num
               end
 
               task create_namespace: :environment do
@@ -129,7 +136,6 @@ module Rails
               end
             end
           EOS
-          f.write(task)
         end
         true
       rescue

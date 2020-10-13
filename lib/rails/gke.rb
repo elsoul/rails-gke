@@ -22,6 +22,12 @@ module Rails
           --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks")
       end
 
+      def resize_cluster pool_name: "default-pool", node_num: 1
+        app = Rails::Gke.configuration.app
+        zone = Rails::Gke.configuration.zone
+        system "gcloud container clusters resize #{app} --node-pool #{pool_name} --num-nodes #{node_num} --zone #{zone}"
+      end
+
       def create_namespace
         app = Rails::Gke.configuration.app
         system("kubectl create namespace #{app}")
