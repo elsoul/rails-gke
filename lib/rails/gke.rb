@@ -13,11 +13,12 @@ module Rails
       end
 
       def create_cluster
+        app = Rails::Gke.configuration.app
         network = Rails::Gke.configuration.network
         sub_network = Rails::Gke.configuration.sub_network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
-        system("gcloud container clusters create graphql-api-cluster --region #{zone} \
+        system("gcloud container clusters create #{app} --region #{zone} \
           --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks")
       end
 
@@ -71,7 +72,7 @@ module Rails
         system("kubectl delete -f ingress.yml --namespace=#{app}")
       end
 
-      def update_container version: "0.0.1"
+      def update_container version: "latest"
         app = Rails::Gke.configuration.app
         project_id = Rails::Gke.configuration.project_id
         system("docker build . -t #{app}:#{version}")
@@ -125,9 +126,9 @@ module Rails
 
       def update_proxy
         system("gcloud compute target-https-proxies update TARGET_PROXY_NAME \
-    --ssl-certificates SSL_CERTIFICATE_LIST \
-    --global-ssl-certificates \
-    --global")
+        --ssl-certificates SSL_CERTIFICATE_LIST \
+        --global-ssl-certificates \
+        --global")
       end
     end
 
