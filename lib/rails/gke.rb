@@ -15,7 +15,7 @@ module Rails
       def create_cluster
         app = Rails::Gke.configuration.app
         network = Rails::Gke.configuration.network
-        sub_network = Rails::Gke.configuration.sub_network
+        sub_network = Rails::Gke.configuration.network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
         system("gcloud container clusters create #{app} --region #{zone} \
