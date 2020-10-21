@@ -18,8 +18,9 @@ module Rails
         sub_network = Rails::Gke.configuration.network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
+        channel = Rails::Gke.configuration.channel
         system("gcloud container clusters create #{app} --region #{zone} \
-          --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks")
+          --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks --release-channel #{channel}")
       end
 
       def resize_cluster pool_name: "default-pool", node_num: 1
@@ -144,7 +145,7 @@ module Rails
     end
 
     class Configuration
-      attr_accessor :project_id, :app, :network, :machine_type, :zone, :domain, :google_application_credentials
+      attr_accessor :project_id, :app, :network, :machine_type, :zone, :domain, :google_application_credentials, :channel
 
       def initialize
         @project_id = nil
@@ -154,6 +155,7 @@ module Rails
         @zone = nil
         @domain = nil
         @google_application_credentials = nil
+        @channel = nil
       end
     end
   end
