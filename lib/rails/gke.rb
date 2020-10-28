@@ -18,7 +18,7 @@ module Rails
                 --address=0.0.0.0 \
                 --target-grpc-proxy=#{proxy_name} \
                 --ports #{port} \
-                --network #{Rails.configuration.network}"
+                --network #{Rails::Gke.configuration.network}"
       end
 
       def delete_target_grpc_proxy proxy_name: "grpc-gke-proxy"
