@@ -97,6 +97,18 @@ module Rails
         system "gcloud compute network-endpoint-groups list"
       end
 
+      def set_network_group_list_env
+        system "NEG_NAME=$(gcloud compute network-endpoint-groups list | grep k8s | awk '{print $1}')"
+      end
+
+      def delete_network_group_list
+        system "gcloud compute network-endpoint-groups delete ${NEG_NAME}"
+      end
+
+      def delete_cluster cluster_name: "grpc-td-cluster"
+        system "gcloud container clusters #{cluster_name}"
+      end
+
       def create_cluster
         app = Rails::Gke.configuration.app
         network = Rails::Gke.configuration.network
