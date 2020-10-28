@@ -48,9 +48,10 @@ module Rails
       end
 
       def add_backend_service service_name: "grpc-gke-helloworld-service", zone: "us-central1-a"
+        neg_name = ENV["NEG_NAME"]
         system "gcloud compute -q backend-services add-backend #{service_name} \
                 --global \
-                --network-endpoint-group #{ENV["NEG_NAME"]} \
+                --network-endpoint-group #{neg_name} \
                 --network-endpoint-group-zone #{zone} \
                 --balancing-mode RATE \
                 --max-rate-per-endpoint 5"
