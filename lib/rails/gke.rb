@@ -47,10 +47,10 @@ module Rails
                 --default-service #{service_name}"
       end
 
-      def add_backend_service service_name: "grpc-gke-helloworld-service", neg_name: "", zone: "us-central1-a"
+      def add_backend_service service_name: "grpc-gke-helloworld-service", zone: "us-central1-a"
         system "gcloud compute -q backend-services add-backend #{service_name} \
                 --global \
-                --network-endpoint-group #{neg_name} \
+                --network-endpoint-group ${NEG_NAME} \
                 --network-endpoint-group-zone #{zone} \
                 --balancing-mode RATE \
                 --max-rate-per-endpoint 5"
