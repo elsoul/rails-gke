@@ -11,7 +11,7 @@ module Rails
         system "gcloud compute -q forwarding-rules delete #{forwarding_rule_name} --global"
       end
 
-      def create_forwarding_rule forwarding_rule_name: "grpc-gke-forwarding-rule", proxy_name: "grpc-gke-proxy"
+      def create_forwarding_rule forwarding_rule_name: "grpc-gke-forwarding-rule", proxy_name: "grpc-gke-proxy", port: 8000
         system "gcloud compute -q forwarding-rules create #{forwarding_rule_name} \
                 --global \
                 --load-balancing-scheme=INTERNAL_SELF_MANAGED \
@@ -50,7 +50,7 @@ module Rails
       def add_backend_service service_name: "grpc-gke-helloworld-service", zone: "us-central1-a"
         system "gcloud compute -q backend-services add-backend #{service_name} \
                 --global \
-                --network-endpoint-group ${NEG_NAME} \
+                --network-endpoint-group #{ENV["NEG_NAME"]} \
                 --network-endpoint-group-zone #{zone} \
                 --balancing-mode RATE \
                 --max-rate-per-endpoint 5"
