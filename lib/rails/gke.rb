@@ -47,8 +47,7 @@ module Rails
                 --default-service #{service_name}"
       end
 
-      def add_backend_service service_name: "grpc-gke-helloworld-service", zone: "us-central1-a"
-        neg_name = ENV["NEG_NAME"]
+      def add_backend_service service_name: "grpc-gke-helloworld-service", zone: "us-central1-a", neg_name: ""
         system "gcloud compute -q backend-services add-backend #{service_name} \
                 --global \
                 --network-endpoint-group #{neg_name} \
