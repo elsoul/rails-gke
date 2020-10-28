@@ -7,6 +7,10 @@ module Rails
     class << self
       attr_accessor :configuration
 
+      def delete_forwarding_rule forwarding_rule_name: "forwarding_rule_name"
+        system "gcloud compute forwarding-rules delete #{forwarding_rule_name}"
+      end
+
       def create_forwarding_rule forwarding_rule_name: "grpc-gke-forwarding-rule", proxy_name: "grpc-gke-proxy"
         system "gcloud compute forwarding-rules create #{forwarding_rule_name} \
                 --global \
@@ -15,6 +19,10 @@ module Rails
                 --target-grpc-proxy=#{proxy_name} \
                 --ports #{port} \
                 --network #{Rails.configuration.network}"
+      end
+
+      def delete_target_grpc_proxy proxy_name: "grpc-gke-proxy"
+        system "gcloud compute target-grpc-proxies delete #{proxy_name}"
       end
 
       def create_target_grpc_proxy proxy_name: "grpc-gke-proxy", url_map: "grpc-gke-url-map"
@@ -28,6 +36,10 @@ module Rails
                 --default-service #{service_name} \
                 --path-matcher-name #{path_matcher_name} \
                 --new-hosts #{hostname}:#{port}"
+      end
+
+      def delete_url_map url_map_name: "grpc-gke-url-map"
+        system "gcloud compute url-maps delete #{url_map_name}"
       end
 
       def create_url_map url_map_name: "grpc-gke-url-map", service_name: "grpc-gke-helloworld-service"
@@ -44,6 +56,10 @@ module Rails
                 --max-rate-per-endpoint 5"
       end
 
+      def delete_backend_service service_name: "grpc-gke-helloworld-service"
+        system "gcloud compute backend-services delete #{service_name} --global"
+      end
+
       def create_backend_service service_name: "grpc-gke-helloworld-service", health_check_name: "grpc-gke-helloworld-hc"
         system "gcloud compute backend-services create #{service_name} \
                 --global \
@@ -58,6 +74,10 @@ module Rails
                 --source-ranges 35.191.0.0/16,130.211.0.0/22 \
                 --target-tags allow-health-checks \
                 --rules tcp:50051"
+      end
+
+      def delete_health_check health_check_name: "grpc-gke-helloworld-hc"
+        system "gcloud compute health-checks delete #{health_check_name}"
       end
 
       def create_health_check health_check_name: "grpc-gke-helloworld-hc"
