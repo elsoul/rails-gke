@@ -103,7 +103,7 @@ module Rails
       end
 
       def delete_network_group_list neg_name: ""
-        system "gcloud compute network-endpoint-groups delete #{neg_name} -q"
+        system "gcloud compute network-endpoint-groups delete #{neg_name} --zone #{Rails::Gke.configuration.zone} -q"
       end
 
       def delete_cluster cluster_name: "grpc-td-cluster"
@@ -112,13 +112,21 @@ module Rails
 
       def create_cluster
         app = Rails::Gke.configuration.app
-        network = Rails::Gke.configuration.network
-        sub_network = Rails::Gke.configuration.network
+        # network = Rails::Gke.configuration.network
+        # sub_network = Rails::Gke.configuration.network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
-        channel = Rails::Gke.configuration.channel
-        system("gcloud container clusters create #{app} --region #{zone} \
-          --machine-type #{machine_type} --enable-autorepair --enable-ip-alias --network #{network} --subnetwork #{sub_network} --num-nodes 2 --enable-autoscaling --min-nodes 1 --max-nodes 4 --tags=allow-health-checks --release-channel #{channel}")
+        system("gcloud container clusters create #{app} \
+                --zone #{zone} \
+                --scopes=https://www.googleapis.com/auth/cloud-platform \
+                --machine-type #{machine_type} \
+                --enable-autorepair \
+                --enable-ip-alias \
+                --num-nodes 2 \
+                --enable-autoscaling \
+                --min-nodes 1 \
+                --max-nodes 4 \
+                --tags=allow-health-checks")
       end
 
       def resize_cluster pool_name: "default-pool", node_num: 1
