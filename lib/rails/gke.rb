@@ -102,12 +102,12 @@ module Rails
         `echo $NEG_NAME`
       end
 
-      def delete_network_group_list
-        system "gcloud compute network-endpoint-groups delete ${NEG_NAME}"
+      def delete_network_group_list neg_name: ""
+        system "gcloud compute network-endpoint-groups delete #{neg_name}"
       end
 
       def delete_cluster cluster_name: "grpc-td-cluster"
-        system "gcloud container clusters #{cluster_name}"
+        system "gcloud container clusters delete #{cluster_name}"
       end
 
       def create_cluster
