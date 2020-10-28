@@ -7,12 +7,12 @@ module Rails
     class << self
       attr_accessor :configuration
 
-      def delete_forwarding_rule forwarding_rule_name: "forwarding_rule_name"
-        system "gcloud compute forwarding-rules delete #{forwarding_rule_name}"
+      def delete_forwarding_rule forwarding_rule_name: "grpc-gke-forwarding-rule"
+        system "gcloud compute -q forwarding-rules delete #{forwarding_rule_name} --global"
       end
 
       def create_forwarding_rule forwarding_rule_name: "grpc-gke-forwarding-rule", proxy_name: "grpc-gke-proxy"
-        system "gcloud compute forwarding-rules create #{forwarding_rule_name} \
+        system "gcloud compute -q forwarding-rules create #{forwarding_rule_name} \
                 --global \
                 --load-balancing-scheme=INTERNAL_SELF_MANAGED \
                 --address=0.0.0.0 \
@@ -22,33 +22,33 @@ module Rails
       end
 
       def delete_target_grpc_proxy proxy_name: "grpc-gke-proxy"
-        system "gcloud compute target-grpc-proxies delete #{proxy_name}"
+        system "gcloud compute -q target-grpc-proxies delete #{proxy_name}"
       end
 
       def create_target_grpc_proxy proxy_name: "grpc-gke-proxy", url_map: "grpc-gke-url-map"
-        system "gcloud compute target-grpc-proxies create #{proxy_name} \
+        system "gcloud compute -q target-grpc-proxies create #{proxy_name} \
                 --url-map #{url_map} \
                 --validate-for-proxyless"
       end
 
       def create_path_matcher url_map: "grpc-gke-url-map", service_name: "grpc-gke-helloworld-service", path_matcher_name: "grpc-gke-path-matcher", hostname: "helloworld-gke", port: "8000"
-        system "gcloud compute url-maps add-path-matcher #{url_map} \
+        system "gcloud compute -q url-maps add-path-matcher #{url_map} \
                 --default-service #{service_name} \
                 --path-matcher-name #{path_matcher_name} \
                 --new-hosts #{hostname}:#{port}"
       end
 
       def delete_url_map url_map_name: "grpc-gke-url-map"
-        system "gcloud compute url-maps delete #{url_map_name}"
+        system "gcloud compute -q url-maps delete #{url_map_name}"
       end
 
       def create_url_map url_map_name: "grpc-gke-url-map", service_name: "grpc-gke-helloworld-service"
-        system "gcloud compute url-maps create #{url_map_name} \
+        system "gcloud compute -q url-maps create #{url_map_name} \
                 --default-service #{service_name}"
       end
 
       def add_backend_service service_name: "grpc-gke-helloworld-service", neg_name: "", zone: "us-central1-a"
-        system "gcloud compute backend-services add-backend #{service_name} \
+        system "gcloud compute -q backend-services add-backend #{service_name} \
                 --global \
                 --network-endpoint-group #{neg_name} \
                 --network-endpoint-group-zone #{zone} \
@@ -57,11 +57,11 @@ module Rails
       end
 
       def delete_backend_service service_name: "grpc-gke-helloworld-service"
-        system "gcloud compute backend-services delete #{service_name} --global"
+        system "gcloud compute -q backend-services delete #{service_name} --global"
       end
 
       def create_backend_service service_name: "grpc-gke-helloworld-service", health_check_name: "grpc-gke-helloworld-hc"
-        system "gcloud compute backend-services create #{service_name} \
+        system "gcloud compute -q backend-services create #{service_name} \
                 --global \
                 --load-balancing-scheme=INTERNAL_SELF_MANAGED \
                 --protocol=GRPC \
@@ -69,11 +69,11 @@ module Rails
       end
 
       def delete_firewall_rule firewall_rule_name: "grpc-gke-allow-health-checks"
-        system "gcloud compute firewall-rules delete #{firewall_rule_name}"
+        system "gcloud compute -q firewall-rules delete #{firewall_rule_name}"
       end
 
       def create_firewall_rule firewall_rule_name: "grpc-gke-allow-health-checks"
-        system "gcloud compute firewall-rules create #{firewall_rule_name} \
+        system "gcloud compute -q firewall-rules create #{firewall_rule_name} \
                 --network #{Rails::Gke.configuration.network} --action allow --direction INGRESS \
                 --source-ranges 35.191.0.0/16,130.211.0.0/22 \
                 --target-tags allow-health-checks \
@@ -81,11 +81,11 @@ module Rails
       end
 
       def delete_health_check health_check_name: "grpc-gke-helloworld-hc"
-        system "gcloud compute health-checks delete #{health_check_name}"
+        system "gcloud compute -q health-checks delete #{health_check_name}"
       end
 
       def create_health_check health_check_name: "grpc-gke-helloworld-hc"
-        system "gcloud compute health-checks create grpc #{health_check_name} --use-serving-port"
+        system "gcloud compute -q health-checks create grpc #{health_check_name} --use-serving-port"
       end
 
       def create_network
