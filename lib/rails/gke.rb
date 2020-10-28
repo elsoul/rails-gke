@@ -68,6 +68,10 @@ module Rails
                 --health-checks #{health_check_name}"
       end
 
+      def delete_firewall_rule firewall_rule_name: "grpc-gke-allow-health-checks"
+        system "gcloud compute firewall-rules delete #{firewall_rule_name}"
+      end
+
       def create_firewall_rule firewall_rule_name: "grpc-gke-allow-health-checks"
         system "gcloud compute firewall-rules create #{firewall_rule_name} \
                 --network #{Rails::Gke.configuration.network} --action allow --direction INGRESS \
