@@ -99,6 +99,7 @@ module Rails
 
       def set_network_group_list_env
         system "NEG_NAME=$(gcloud compute network-endpoint-groups list | grep k8s | awk '{print $1}')"
+        `echo $NEG_NAME`
       end
 
       def delete_network_group_list
