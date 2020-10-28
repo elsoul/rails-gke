@@ -103,11 +103,11 @@ module Rails
       end
 
       def delete_network_group_list neg_name: ""
-        system "gcloud compute network-endpoint-groups delete #{neg_name}"
+        system "gcloud compute network-endpoint-groups delete #{neg_name} -q"
       end
 
       def delete_cluster cluster_name: "grpc-td-cluster"
-        system "gcloud container clusters delete #{cluster_name}"
+        system "gcloud container clusters delete #{cluster_name} --zone #{Rails::Gke.configuration.zone} -q"
       end
 
       def create_cluster
