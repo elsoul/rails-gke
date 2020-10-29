@@ -25,14 +25,14 @@ module Rails
         system "gcloud compute -q target-grpc-proxies delete #{proxy_name}"
       end
 
-      def create_target_grpc_proxy proxy_name: "grpc-gke-proxy", url_map: "grpc-gke-url-map"
+      def create_target_grpc_proxy proxy_name: "grpc-gke-proxy", url_map_name: "grpc-gke-url-map"
         system "gcloud compute -q target-grpc-proxies create #{proxy_name} \
-                --url-map #{url_map} \
+                --url-map #{url_map_name} \
                 --validate-for-proxyless"
       end
 
-      def create_path_matcher url_map: "grpc-gke-url-map", service_name: "grpc-gke-helloworld-service", path_matcher_name: "grpc-gke-path-matcher", hostname: "helloworld-gke", port: "8000"
-        system "gcloud compute -q url-maps add-path-matcher #{url_map} \
+      def create_path_matcher url_map_name: "grpc-gke-url-map", service_name: "grpc-gke-helloworld-service", path_matcher_name: "grpc-gke-path-matcher", hostname: "helloworld-gke", port: "8000"
+        system "gcloud compute -q url-maps add-path-matcher #{url_map_name} \
                 --default-service #{service_name} \
                 --path-matcher-name #{path_matcher_name} \
                 --new-hosts #{hostname}:#{port}"
@@ -117,6 +117,8 @@ module Rails
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
         system("gcloud container clusters create #{app} \
+                --network #{network} \
+                --subnetwork #{network} \
                 --zone #{zone} \
                 --scopes=https://www.googleapis.com/auth/cloud-platform \
                 --machine-type #{machine_type} \
