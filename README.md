@@ -47,7 +47,7 @@ Or install it yourself as:
 
 Initialize Config
 
-    $ rails_gke
+    $ rails_gke_init
 
 This command will create `config/initializers/rails-gke.rb`
 
