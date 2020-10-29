@@ -200,7 +200,7 @@ module Rails
 
       def get_svc
         app = Rails::Gke.configuration.app
-        system("kubectl get svc #{app}-service --namespace=#{app}")
+        system("kubectl get svc --namespace=#{app}")
       end
 
       def get_ingress
