@@ -96,12 +96,13 @@ module Rails
       def get_network_group_list
         system "gcloud compute network-endpoint-groups list"
       end
-      
+
       def create_network_group
         app = Rails::Gke.configuration.app
         network = Rails::Gke.configuration.network
         sub_network = Rails::Gke.configuration.network
         system("gcloud compute network-endpoint-groups create #{app} \
+                --default-port=0 \
                 --network #{network} \
                 --subnet #{sub_network} \
                 --global")
