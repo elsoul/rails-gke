@@ -74,7 +74,10 @@ module Rails
 
       def create_firewall_rule firewall_rule_name: "grpc-gke-allow-health-checks"
         system "gcloud compute -q firewall-rules create #{firewall_rule_name} \
-                --network #{Rails::Gke.configuration.network} --action allow --direction INGRESS \
+                --network #{Rails::Gke.configuration.network} \
+                --subnet #{Rails::Gke.configuration.network} \
+                --action allow \
+                --direction INGRESS \
                 --source-ranges 35.191.0.0/16,130.211.0.0/22 \
                 --target-tags allow-health-checks \
                 --rules tcp:50051"
