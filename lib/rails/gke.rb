@@ -96,6 +96,16 @@ module Rails
       def get_network_group_list
         system "gcloud compute network-endpoint-groups list"
       end
+      
+      def create_network_group
+        app = Rails::Gke.configuration.app
+        network = Rails::Gke.configuration.network
+        sub_network = Rails::Gke.configuration.network
+        system("gcloud compute network-endpoint-groups create #{app} \
+                --network #{network} \
+                --subnet #{sub_network} \
+                --global")
+      end
 
       def set_network_group_list_env
         system "NEG_NAME=$(gcloud compute network-endpoint-groups list | grep k8s | awk '{print $1}')"
