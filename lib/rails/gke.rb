@@ -112,13 +112,13 @@ module Rails
 
       def create_cluster
         app = Rails::Gke.configuration.app
-        # network = Rails::Gke.configuration.network
-        # sub_network = Rails::Gke.configuration.network
+        network = Rails::Gke.configuration.network
+        sub_network = Rails::Gke.configuration.network
         machine_type = Rails::Gke.configuration.machine_type
         zone = Rails::Gke.configuration.zone
         system("gcloud container clusters create #{app} \
                 --network #{network} \
-                --subnetwork #{network} \
+                --subnetwork #{sub_network} \
                 --zone #{zone} \
                 --scopes=https://www.googleapis.com/auth/cloud-platform \
                 --machine-type #{machine_type} \
