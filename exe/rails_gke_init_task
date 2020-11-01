@@ -1,0 +1,18 @@
+#!/usr/bin/env ruby
+require "rails/gke"
+config_path = "./app/tasks/gke.rb"
+if File.exist? config_path
+  puts "This process will Overwrite `#{config_path}` file. OK / Enter"
+  confirm = gets.chomp
+  exit unless confirm == ""
+end
+puts "Which framewerk:   \n 1. SOULS \n 2. RAILS \n Enter Number: "
+fw = gets.chomp.to_i
+case fw
+when 1
+  puts "created `app/tasks/gke.rb` !"
+  puts Rails::Gke::Initialize.create_souls_task
+else
+  puts "created `lib/tasks/gke.rb` !"
+  puts Rails::Gke::Initialize.create_rails_task
+end
