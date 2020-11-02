@@ -6,7 +6,7 @@ if File.exist? config_path
   confirm = gets.chomp
   exit unless confirm == ""
 end
-puts "Which framewerk:   \n 1. SOULS \n 2. RAILS \n Enter Number: "
+puts "Which Framework:   \n 1. SOULS \n 2. RAILS \n Enter Number: "
 fw = gets.chomp.to_i
 case fw
 when 1
