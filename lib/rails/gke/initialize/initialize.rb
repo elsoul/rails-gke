@@ -28,10 +28,202 @@ module Rails
         puts "created ingress.yml" if self.ingress
       end
 
-      def create_task
-        return "Error: Please Set Rails::Gke.configuration" if Rails::Gke.configuration.nil?
+      def create_souls_task
+        FileUtils.mkdir_p "app/tasks" unless File.directory? "app/tasks"
+        path = "app/tasks/gke.rake"
+        File.open(path, "w") do |f|
+          f.write <<~EOS
+            namespace :gke do
+              task create_cluster: :environment do
+                Rails::Gke.create_cluster
+              end
+
+              task add_backend_service: :environment do
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.add_backend_service neg_name: neg_name
+              end
+
+
+              task create_td_default: :environment do
+                Rails::Gke.create_health_check
+                Rails::Gke.create_firewall_rule
+                Rails::Gke.create_backend_service
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.add_backend_service neg_name: neg_name
+                Rails::Gke.create_url_map
+                Rails::Gke.create_path_matcher
+                Rails::Gke.create_target_grpc_proxy
+                Rails::Gke.create_forwarding_rule
+              end
+
+              task create_td: :environment do
+                app = "blog-service"
+                health_check_name = app.to_s + "-hc"
+                Rails::Gke.create_health_check health_check_name: health_check_name
+                firewall_rule_name = app.to_s + "-allow-health-checks"
+                Rails::Gke.create_firewall_rule firewall_rule_name: firewall_rule_name
+                service_name = app.to_s + ""
+                zone = Rails::Gke.configuration.zone
+
+                Rails::Gke.create_backend_service service_name: service_name, health_check_name: health_check_name
+                neg_name = "k8s1-87bf55a7-default-blog-service-8080-c7e834de"
+                Rails::Gke.add_backend_service service_name: service_name, neg_name: neg_name, zone: zone
+
+                url_map_name = app.to_s + "-url-map"
+                Rails::Gke.create_url_map url_map_name: url_map_name, service_name: service_name
+                path_matcher_name = app.to_s + "-path-mathcher"
+                hostname = app.to_s + ""
+                port = "5000"
+                Rails::Gke.create_path_matcher url_map_name: url_map_name, service_name: service_name, path_matcher_name: path_matcher_name, hostname: hostname, port: port
+                proxy_name = app.to_s + "-proxy"
+                Rails::Gke.create_target_grpc_proxy proxy_name: proxy_name, url_map_name: url_map_name
+                forwarding_rule_name = app.to_s + "-forwarding-rule"
+                Rails::Gke.create_forwarding_rule forwarding_rule_name: forwarding_rule_name, proxy_name: proxy_name, port: port
+              end
+
+              task delete_td: :environment do
+                app = "blog-service"
+                health_check_name = app.to_s + "-hc"
+                firewall_rule_name = app.to_s + "-allow-health-checks"
+                service_name = app.to_s + ""
+                url_map_name = app.to_s + "-url-map"
+                proxy_name = app.to_s + "-proxy"
+                forwarding_rule_name = app.to_s + "-forwarding-rule"
+
+                Rails::Gke.delete_forwarding_rule forwarding_rule_name: forwarding_rule_name
+                Rails::Gke.delete_target_grpc_proxy proxy_name: proxy_name
+                Rails::Gke.delete_url_map url_map_name: url_map_name
+                Rails::Gke.delete_backend_service service_name: service_name
+                Rails::Gke.delete_health_check health_check_name: health_check_name
+                Rails::Gke.delete_firewall_rule firewall_rule_name: firewall_rule_name
+              end
+
+              task get_neg_name: :environment do
+                Rails::Gke.get_network_group_list
+              end
+
+              task set_neg_name: :environment do
+                Rails::Gke.set_network_group_list_env
+              end
+            
+              task delete_td_default: :environment do
+                Rails::Gke.delete_forwarding_rule
+                Rails::Gke.delete_target_grpc_proxy
+                Rails::Gke.delete_url_map
+                Rails::Gke.delete_backend_service
+                Rails::Gke.delete_health_check
+                Rails::Gke.delete_firewall_rule
+                Rails::Gke.delete_cluster
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.delete_network_group_list neg_name: neg_name
+              end
+            
+              task :resize_cluster, [:pool_name, :node_num] => :environment do |_, args|
+                pool_name = "default-pool" || args[:pool_name]
+                node_num = 1 || args[:node_num]
+                Rails::Gke.resize_cluster pool_name: pool_name, node_num: node_num
+              end
+            
+              task create_namespace: :environment do
+                Rails::Gke.create_namespace
+              end
+            
+              task create_ip: :environment do
+                Rails::Gke.create_ip
+              end
+            
+              task apply_deployment: :environment do
+                Rails::Gke.apply_deployment
+              end
+            
+              task apply_service: :environment do
+                Rails::Gke.apply_service
+              end
+            
+              task apply_secret: :environment do
+                Rails::Gke.apply_secret
+              end
+            
+              task apply_ingress: :environment do
+                Rails::Gke.apply_ingress
+              end
+            
+              task delete_deployment: :environment do
+                Rails::Gke.delete_deployment
+              end
+            
+              task delete_service: :environment do
+                Rails::Gke.delete_service
+              end
+            
+              task delete_secret: :environment do
+                Rails::Gke.delete_secret
+              end
+            
+              task delete_ingress: :environment do
+                Rails::Gke.delete_ingress
+              end
+            
+              task test: :environment do
+                Rails::Gke.run_test
+              end
+            
+              task :update, [:version] => :environment do |_, args|
+                Rails::Gke.update_container version: args[:version]
+              end
+            
+              task apply_all: :environment do
+                Rails::Gke.apply_deployment
+                Rails::Gke.apply_service
+                Rails::Gke.apply_secret
+                Rails::Gke.apply_ingress
+              end
+            
+              task delete_all: :environment do
+                Rails::Gke.delete_deployment
+                Rails::Gke.delete_service
+                Rails::Gke.delete_secret
+                Rails::Gke.delete_ingress
+              end
+            
+              task get_pods: :environment do
+                Rails::Gke.get_pods
+              end
+            
+              task get_svc: :environment do
+                Rails::Gke.get_svc
+              end
+            
+              task get_ingress: :environment do
+                Rails::Gke.get_ingress
+              end
+            
+              task get_clusters: :environment do
+                Rails::Gke.get_clusters
+              end
+            
+              task get_current_cluster: :environment do
+                Rails::Gke.get_current_cluster
+              end
+            
+              task :use_context, [:cluster] => :environment do |_, args|
+                Rails::Gke.use_context cluster: args[:cluster]
+              end
+            
+              task get_credentials: :environment do
+                Rails::Gke.get_credentials
+              end
+            end
+          EOS
+        end
+        true
+      rescue StandardError => error
+        puts error
+        false
+      end
+
+      def create_rails_task
         FileUtils.mkdir_p "lib/tasks" unless File.directory? "lib/tasks"
-        return "Error: Already Exsit lib/tasks/gke.rake" if File.file? "lib/tasks/gke.rake"
         path = "lib/tasks/gke.rake"
         File.open(path, "w") do |f|
           f.write <<~EOS
@@ -40,106 +232,187 @@ module Rails
                 Rails::Gke.create_cluster
               end
 
+              task add_backend_service: :environment do
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.add_backend_service neg_name: neg_name
+              end
+
+
+              task create_td_default: :environment do
+                Rails::Gke.create_health_check
+                Rails::Gke.create_firewall_rule
+                Rails::Gke.create_backend_service
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.add_backend_service neg_name: neg_name
+                Rails::Gke.create_url_map
+                Rails::Gke.create_path_matcher
+                Rails::Gke.create_target_grpc_proxy
+                Rails::Gke.create_forwarding_rule
+              end
+
+              task create_td: :environment do
+                app = "blog-service"
+                health_check_name = app.to_s "-hc"
+                Rails::Gke.create_health_check health_check_name: health_check_name
+                firewall_rule_name = app.to_s "-allow-health-checks"
+                Rails::Gke.create_firewall_rule firewall_rule_name: firewall_rule_name
+                service_name = app.to_s ""
+                zone = Rails::Gke.configuration.zone
+
+                Rails::Gke.create_backend_service service_name: service_name, health_check_name: health_check_name
+                neg_name = "k8s1-87bf55a7-default-blog-service-8080-c7e834de"
+                Rails::Gke.add_backend_service service_name: service_name, neg_name: neg_name, zone: zone
+
+                url_map_name = app.to_s "-url-map"
+                Rails::Gke.create_url_map url_map_name: url_map_name, service_name: service_name
+                path_matcher_name = app.to_s "-path-mathcher"
+                hostname = app.to_s ""
+                port = "5000"
+                Rails::Gke.create_path_matcher url_map_name: url_map_name, service_name: service_name, path_matcher_name: path_matcher_name, hostname: hostname, port: port
+                proxy_name = app.to_s "-proxy"
+                Rails::Gke.create_target_grpc_proxy proxy_name: proxy_name, url_map_name: url_map_name
+                forwarding_rule_name = app.to_s "-forwarding-rule"
+                Rails::Gke.create_forwarding_rule forwarding_rule_name: forwarding_rule_name, proxy_name: proxy_name, port: port
+              end
+
+              task delete_td: :environment do
+                app = "blog-service"
+                health_check_name = app.to_s "-hc"
+                firewall_rule_name = app.to_s "-allow-health-checks"
+                service_name = app.to_s ""
+                url_map_name = app.to_s "-url-map"
+                proxy_name = app.to_s "-proxy"
+                forwarding_rule_name = app.to_s "-forwarding-rule"
+
+                Rails::Gke.delete_forwarding_rule forwarding_rule_name: forwarding_rule_name
+                Rails::Gke.delete_target_grpc_proxy proxy_name: proxy_name
+                Rails::Gke.delete_url_map url_map_name: url_map_name
+                Rails::Gke.delete_backend_service service_name: service_name
+                Rails::Gke.delete_health_check health_check_name: health_check_name
+                Rails::Gke.delete_firewall_rule firewall_rule_name: firewall_rule_name
+              end
+
+              task get_neg_name: :environment do
+                Rails::Gke.get_network_group_list
+              end
+
+              task set_neg_name: :environment do
+                Rails::Gke.set_network_group_list_env
+              end
+            
+              task delete_td_default: :environment do
+                Rails::Gke.delete_forwarding_rule
+                Rails::Gke.delete_target_grpc_proxy
+                Rails::Gke.delete_url_map
+                Rails::Gke.delete_backend_service
+                Rails::Gke.delete_health_check
+                Rails::Gke.delete_firewall_rule
+                Rails::Gke.delete_cluster
+                neg_name = Rails::Gke.set_network_group_list_env
+                Rails::Gke.delete_network_group_list neg_name: neg_name
+              end
+            
               task :resize_cluster, [:pool_name, :node_num] => :environment do |_, args|
                 pool_name = "default-pool" || args[:pool_name]
                 node_num = 1 || args[:node_num]
                 Rails::Gke.resize_cluster pool_name: pool_name, node_num: node_num
               end
-
+            
               task create_namespace: :environment do
                 Rails::Gke.create_namespace
               end
-
+            
               task create_ip: :environment do
                 Rails::Gke.create_ip
               end
-
+            
               task apply_deployment: :environment do
                 Rails::Gke.apply_deployment
               end
-
+            
               task apply_service: :environment do
                 Rails::Gke.apply_service
               end
-
+            
               task apply_secret: :environment do
                 Rails::Gke.apply_secret
               end
-
+            
               task apply_ingress: :environment do
                 Rails::Gke.apply_ingress
               end
-
+            
               task delete_deployment: :environment do
                 Rails::Gke.delete_deployment
               end
-
+            
               task delete_service: :environment do
                 Rails::Gke.delete_service
               end
-
+            
               task delete_secret: :environment do
                 Rails::Gke.delete_secret
               end
-
+            
               task delete_ingress: :environment do
                 Rails::Gke.delete_ingress
               end
-
+            
               task test: :environment do
                 Rails::Gke.run_test
               end
-
+            
               task :update, [:version] => :environment do |_, args|
                 Rails::Gke.update_container version: args[:version]
               end
-
+            
               task apply_all: :environment do
                 Rails::Gke.apply_deployment
                 Rails::Gke.apply_service
                 Rails::Gke.apply_secret
                 Rails::Gke.apply_ingress
               end
-
+            
               task delete_all: :environment do
                 Rails::Gke.delete_deployment
                 Rails::Gke.delete_service
                 Rails::Gke.delete_secret
                 Rails::Gke.delete_ingress
               end
-
+            
               task get_pods: :environment do
                 Rails::Gke.get_pods
               end
-
+            
               task get_svc: :environment do
                 Rails::Gke.get_svc
               end
-
+            
               task get_ingress: :environment do
                 Rails::Gke.get_ingress
               end
-
+            
               task get_clusters: :environment do
                 Rails::Gke.get_clusters
               end
-
+            
               task get_current_cluster: :environment do
                 Rails::Gke.get_current_cluster
               end
-
+            
               task :use_context, [:cluster] => :environment do |_, args|
                 Rails::Gke.use_context cluster: args[:cluster]
               end
-
+            
               task get_credentials: :environment do
                 Rails::Gke.get_credentials
               end
-            end
+            end          
           EOS
         end
         true
-      rescue
+      rescue StandardError => error
+        puts error
         false
       end
 
