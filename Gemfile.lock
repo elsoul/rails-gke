@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rails-gke (0.6.4)
+    rails-gke (0.6.5)
 
 GEM
   remote: https://rubygems.org/
