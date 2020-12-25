@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["fumitake.kawasaki@el-soul.com"]
 
   spec.summary       = "Ruby on Rails GKE Deploy Kit"
-  spec.description   = "Ruby on Rails GKE Deploy Kit. You can deploy your Ruby on Rails on GKE with https."
+  spec.description   = "This gem is migrated to `souls` gem. Please go to `souls` gem."
   spec.homepage      = "https://github.com/elsoul/rails-gke"
   spec.license       = "Apache-2.0"
   spec.metadata = { "source_code_uri" => "https://github.com/elsoul/rails-gke" }
